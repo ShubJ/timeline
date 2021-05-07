@@ -1,6 +1,6 @@
 # timeline
 ### Description
-This repo consists of a simple Timeline UI created using **Vanilla Javascript**, **HTML**, **JQuery** and **CSS**.
+This repo consists of a simple Timeline UI created using **Javascript**, **HTML**, **JQuery** and **CSS**.
 
 ![Project Look](look1.png)
 
