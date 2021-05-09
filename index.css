@@ -5,6 +5,23 @@
   margin: 0;
 }
 
+textarea {
+  resize: none;
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  min-height: 40px;
+  line-height: 20px;
+}
+
+.error {
+  display: none;
+}
+
+input {
+  color: white;
+}
+
 html {
   height: 100vh;
 }
@@ -12,6 +29,10 @@ html {
 body {
   color: white;
   font: normal 16px/1.5 "Helvetica Neue", sans-serif;
+}
+
+div {
+  overflow-wrap: break-word;
 }
 
 time {
@@ -48,27 +69,31 @@ time {
   list-style-type: none;
 }
 
-.timeline ul li::after {
-  content: "";
+.timeline ul li > span {
   width: 4vh;
+  left: 50%;
+  bottom: 0;
   position: absolute;
   height: 4vh;
   background: white;
   border-radius: 50%;
   transform: translateX(-50%);
   transition: background 0.5s ease-in-out;
-  bottom: 0;
-  left: 50%;
 }
 
-.timeline ul li.in-view::after {
+.timeline ul li.in-view > span {
   background: #f45b69;
 }
-/* .timeline ul li:nth-child(odd) div {
-  transform: translate3d(200px, 0, 0);
-} */
 
-ul li div {
+.timeline ul li.last-li span {
+  font-size: 2rem;
+  justify-content: center;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+ul li > div {
   width: 35vw;
   position: relative;
   padding: 10px;
@@ -80,14 +105,39 @@ ul li div {
   transition: all 0.5s ease-in-out;
 }
 
+ul li div.empty {
+  display: flex;
+  flex-direction: column;
+}
+
+ul li div.empty input {
+  background: transparent;
+  border: 0 0 1px 0 solid;
+  outline: none;
+  width: 50%;
+  user-select: none;
+  border-width: 0 0 2px 0;
+  border-color: white;
+}
+
+ul li div.empty textarea.event-text {
+  height: 7vh;
+  margin-top: 6px;
+  background: transparent;
+  outline: none;
+  border: 0;
+  color: white;
+  border-bottom: 1px white solid;
+}
+
 /* This applies when the li element is in the Viewport and hence we remove the transformation */
-.timeline ul li.in-view div {
+.timeline ul li.in-view > div {
   transform: none;
   visibility: visible;
   opacity: 1;
 }
 
-ul li div::before {
+ul li > div::before {
   content: "";
   width: 0;
   height: 0;
@@ -100,27 +150,37 @@ ul li div::before {
   border-color: transparent #f45b69 transparent transparent;
 }
 
-ul li:nth-child(even) div {
+ul li:nth-child(even) > div {
   left: -39vw;
 }
-ul li:nth-child(even) div::before {
+ul li:nth-child(even) > div::before {
   left: 35vw;
   border-width: 8px 0 8px 16px;
   border-color: transparent transparent transparent #f45b69;
 }
 
-ul li:nth-child(odd) div {
+ul li:nth-child(odd) > div {
   transform: translate3d(200px, 0, 0);
 }
-ul li:nth-child(even) div {
+ul li:nth-child(even) > div {
   transform: translate3d(-200px, 0, 0);
 }
 
+div.event-action span {
+  font-size: 200%;
+  font-size: 3vh;
+  height: 4vh;
+  cursor: pointer;
+  width: 4vh;
+  float: right;
+  position: initial;
+}
+
 @media screen and (max-width: 900px) {
-  .timeline ul li:nth-child(even) div {
+  .timeline ul li:nth-child(even) > div {
     left: -44vw;
   }
-  ul li:nth-child(even) div::before {
+  ul li:nth-child(even) > div::before {
     left: 19vh;
   }
 }
