@@ -85,7 +85,7 @@ time {
   background: #f45b69;
 }
 
-.timeline ul li.last-li span {
+.timeline ul li.last-li > span {
   font-size: 2rem;
   justify-content: center;
   display: flex;
@@ -103,6 +103,25 @@ ul li > div {
   visibility: hidden;
   opacity: 0;
   transition: all 0.5s ease-in-out;
+}
+
+ul li > div div.time {
+  display: flex;
+  justify-content: space-between;
+}
+
+ul li > div div.time > div {
+  display: none;
+}
+
+ul li > div div.time > div > span {
+  cursor: pointer;
+}
+
+ul li:first-child > div div.time > div > span.move-up,
+ul li:last-child > div div.time > div > span.move-down,
+ul li.before-last-added > div div.time > div > span.move-down {
+  display: none;
 }
 
 ul li div.empty {

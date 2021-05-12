@@ -16,11 +16,41 @@ var events = [
   for (let i = 0; i < events.length; i++) {
     let liElement = "";
     if (i == events.length - 1)
-      liElement = `<li class="last-li"><div><time>${events[i].time}</time>${events[i].text}</div><span>+</span></li>`;
+      liElement = `<li class="last-li">
+      <div>
+        <div class="time">
+          <time>${events[i].time}</time>
+          <div>
+            <span class="move-up">&#8639;</span>
+            <span class="move-down">&#8642;</span>
+          </div>
+        </div>
+        <div>${events[i].text}</div>
+      </div>
+      <span>+</span>
+      </li>`;
     else
-      liElement = `<li><div><time>${events[i].time}</time>${events[i].text}</div><span></span></li>`;
+      liElement = `<li>
+      <div>
+        <div class="time">
+          <time>${events[i].time}</time>
+          <div>
+          <span class="move-up">&#8639;</span>
+          <span class="move-down">&#8642;</span>
+          </div>
+        </div>
+        <div>${events[i].text}</div>
+      </div>
+      <span></span>
+      </li>`;
     eventList.append(liElement);
   }
+  addEventClickEventBinder();
+  // add hover effect to display move up and down buttons
+  addHover();
+
+  bindMoveEventUpDown();
+
   // Check if events are in viewport then trigger the animation.
   callbackFunc();
   // listen for events
@@ -63,7 +93,9 @@ function isElementInViewport(el) {
   );
 }
 
-$("ul li.last-li span").on("click", addNewEventListener);
+function addEventClickEventBinder() {
+  $("ul li.last-li > span").on("click", addNewEventListener);
+}
 
 function addNewEventListener() {
   let liElement = `<li><div class="empty"><input placeholder="YEAR" type="text" />
@@ -80,10 +112,9 @@ function addNewEventListener() {
   addEventAddCancelBinder();
 
   // Disable click from the last-li span element.
-  $("ul li.last-li span").text("").off("click");
-  $("ul li.last-li").removeClass("last-li");
+  $("ul li.last-li > span").text("").off("click");
+  $("ul li.last-li").removeClass("last-li").addClass("before-last-added");
 
-  // $("ul li div.empty input").focus();
   // Scroll to bottom of the page
   window.scrollTo(0, document.body.scrollHeight);
 }
@@ -104,13 +135,28 @@ function addEvent() {
   if (yearValue.match(/^\d{4}$/)) {
     if (textValue.length > 5) {
       events.push({ time: yearValue, text: textValue });
+      // remove class before-last-added to indicate that the empty div is no longer.
+      $("ul li:nth-last-child(2)").removeClass("before-last-added");
       // remove the last li element and add a new li with user input content.
       $("ul li:last-child").remove();
       eventList.append(
-        `<li class="last-li"><div><time>${yearValue}</time>${textValue}</div><span>+</span></li>`
+        `<li class="last-li">
+        <div>
+          <div class="time">
+            <time>${yearValue}</time>
+            <div style="display: none">
+            <span class="move-up">&#8639;</span>
+            <span class="move-down">&#8642;</span>
+            </div>
+          </div>
+          <div>${textValue}</div>
+        </div>
+        <span>+</span>
+        </li>`
       );
-      $("ul li.last-li span").on("click", addNewEventListener);
-      console.log(events);
+      addEventClickEventBinder();
+      bindMoveEventUpDown();
+      addHover();
     } else {
       // Display error for 1 sec
       $("ul li div.empty span.error.text").removeClass("error");
@@ -130,7 +176,78 @@ function cancelEvent() {
   // remove the empty div created for taking user input.
   $("ul li:last-child").remove();
   // mark it as the last li.
-  $("ul li:last-child").addClass("last-li");
-  // Show "+" and bind addNewEventListener function on click.
-  $("ul li.last-li span").text("+").on("click", addNewEventListener);
+  $("ul li:last-child").addClass("last-li").removeClass("before-last-added");
+  // Show "+"
+  $("ul li.last-li > span").text("+");
+  addEventClickEventBinder();
+}
+function bindMoveEventUpDown() {
+  $("li > div > div.time > div > span.move-up").on("click", function () {
+    // Get the index of clicked li element.
+    let liIndex = $(this).closest("li").index();
+    // Exchange the html of li elements.
+    let temp = $(`ul li:nth-child(${liIndex + 1})`).html();
+    $(`ul li:nth-child(${liIndex + 1})`).html(
+      $(`ul li:nth-child(${liIndex})`).html()
+    );
+    $(`ul li:nth-child(${liIndex})`).html(temp);
+
+    // If clicked li is the last li then add the "+" to the new last li and vice versa.
+    if (liIndex == events.length - 1) {
+      let classes = $(`ul li:nth-child(${liIndex + 1})`).attr("class");
+      if (classes.includes("before-last-added")) {
+        $(`ul li:nth-child(${liIndex + 1}) > span`).text("");
+      } else {
+        $(`ul li:nth-child(${liIndex + 1}) > span`).text("+");
+        addEventClickEventBinder();
+      }
+      $(`ul li:nth-child(${liIndex}) > span`).text("");
+    }
+    // Bind move up and down events to the new li elements
+    bindMoveEventUpDown();
+  });
+
+  $("li > div > div.time > div > span.move-down").on("click", function () {
+    // Get the index of clicked li element
+    let liIndex = $(this).closest("li").index();
+    // Exchange the html of li elements.
+    let temp = $(`ul li:nth-child(${liIndex + 1})`).html();
+    $(`ul li:nth-child(${liIndex + 1})`).html(
+      $(`ul li:nth-child(${liIndex + 2})`).html()
+    );
+    $(`ul li:nth-child(${liIndex + 2})`).html(temp);
+
+    // If clicked li is the last li then add the "+" to the new last li and vice versa.
+    if (liIndex == events.length - 2) {
+      let classes = $(`ul li:nth-child(${liIndex + 2})`).attr("class");
+      if (classes.includes("before-last-added")) {
+        $(`ul li:nth-child(${liIndex + 2}) > span`).text("");
+      } else {
+        $(`ul li:nth-child(${liIndex + 2}) > span`).text("+");
+        addEventClickEventBinder();
+      }
+      $(`ul li:nth-child(${liIndex + 1}) > span`).text("");
+    }
+    // Bind move up and down events to the new li elements
+    bindMoveEventUpDown();
+  });
+}
+
+function addHover() {
+  $("ul li").hover(
+    function () {
+      let index = $("ul li").index(this);
+      $(`ul li:nth-child(${index + 1}) > div > div.time > div`).css(
+        "display",
+        "flex"
+      );
+    },
+    function () {
+      let index = $("ul li").index(this);
+      $(`ul li:nth-child(${index + 1}) > div > div.time > div`).css(
+        "display",
+        "none"
+      );
+    }
+  );
 }
