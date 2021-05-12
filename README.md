@@ -2,7 +2,7 @@
 ### Description
 This repo consists of a simple Timeline UI created using **Javascript**, **HTML**, **JQuery** and **CSS**.
 
-### Feature
+### Features
 1. Add new events in Timeline.
 2. Move the events up or down in the Timeline.
 
